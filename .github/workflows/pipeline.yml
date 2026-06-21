@@ -31,6 +31,8 @@ jobs:
           mkdir -p secrets
           printf '%s' "$GBQ_CREDS" > secrets/gbq-wainwirghts-bot-creds.json
           chmod 600 secrets/gbq-wainwirghts-bot-creds.json
+        env:
+            GBQ_CREDS: ${{ secrets.GOOGLE_BIG_QUERY_SA_CREDS }}
 
       - name: Validate Google credentials JSON
         run: |
