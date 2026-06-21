@@ -29,7 +29,7 @@ jobs:
       - name: Run pipeline
         run: |
           source .venv/bin/activate
-          python src/main.py
+          python src/pipeline.py
         env:
           AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}
           AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
