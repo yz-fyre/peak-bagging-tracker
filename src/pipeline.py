@@ -2,7 +2,7 @@
 Combined pipeline: pulls data from Google Sheets, cleans/transforms it,
 and loads it into Azure SQL Database.
 
-Run manually whenever you've updated your Wainwrights Google Sheet:
+Run manually whenever Google Sheet has been updated, or schedule to run automatically (e.g. via cron job).:
     python src/main.py
 """
 
