@@ -11,11 +11,13 @@ SCOPES = [
 
 
 def get_client():
+    """ Get a gspread client using service account credentials. """
     creds = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
     return gspread.authorize(creds)
 
 
 def load_sheet_as_dataframe(sheet_name: str = SHEET_NAME, worksheet_index: int = 1) -> pd.DataFrame:
+    """ Load a Google Sheet as a pandas DataFrame. """
     client = get_client()
     spreadsheet = client.open(sheet_name)
     worksheet = spreadsheet.get_worksheet(worksheet_index)
