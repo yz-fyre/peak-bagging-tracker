@@ -41,7 +41,17 @@ jobs:
       - name: Run pipeline
         run: |
           source .venv/bin/activate
-          python src/pipeline.py
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt of 3..."
+            if python src/pipeline.py; then
+              echo "Pipeline succeeded."
+              exit 0
+            fi
+            echo "Attempt $attempt failed. Waiting 30s before retry (Azure SQL may be waking up)..."
+            sleep 30
+          done
+          echo "Pipeline failed after 3 attempts."
+          exit 1
         env:
           AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}
           AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
