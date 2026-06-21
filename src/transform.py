@@ -1,4 +1,5 @@
 import pandas as pd
+from OSGridConverter import grid2latlong
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -72,13 +73,38 @@ def compute_metrics(df: pd.DataFrame) -> dict:
     }
 
 
+def grid_ref_to_lat_lon(grid_ref: str):
+    """
+    Convert a single OS Grid Reference string (e.g. "NY266307") into
+    a (latitude, longitude) tuple. Returns (None, None) if conversion fails
+    (e.g. blank or malformed grid ref).
+    """
+    if not grid_ref or not isinstance(grid_ref, str):
+        return None, None
+
+    grid_ref = grid_ref.strip().replace(" ", "")
+    if len(grid_ref) < 6:
+        return None, None
+
+    try:
+        location = grid2latlong(grid_ref)
+        return location.latitude, location.longitude
+    except Exception:
+        return None, None
+
+
 if __name__ == "__main__":
-    from ingest import load_sheet_as_dataframe
+    from ingest import load_sheet_as_dataframe  
 
     raw_df = load_sheet_as_dataframe()
     clean_df = clean_data(raw_df)
+    clean_df[["Latitude", "Longitude"]] = clean_df["OS Grid Ref"].apply(lambda gr: pd.Series(grid_ref_to_lat_lon(gr)))
     metrics = compute_metrics(clean_df)
 
+    print("New dataset columns:")
+    print(clean_df.columns.tolist())
+    print("Example of Cleaned dataset data:")
+    print(clean_df.head())
     print(f"Completed {metrics['completed']} / {metrics['total_fells']} ({metrics['pct_complete']}%)")
     print(f"Total height climbed: {metrics['total_height_climbed_m']} m")
     print("\nAscents per year:")
