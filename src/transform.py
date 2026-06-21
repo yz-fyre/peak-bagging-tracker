@@ -23,7 +23,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Boolean: X Group or not
     df["Wainwright Flag"] = df["Wainwright_indicator"].str.strip().str.upper() == "Y"
     df["Birkett Flag"] = df["Birkett_indicator"].str.strip().str.upper() == "Y"
-    df["Wainwright Outerlying Fells Flag"] = df["Outerlying_Fell_indicator"].str.strip().str.upper() == "Y"
+    df["Outerlying Flag"] = df["Outerlying_Fell_indicator"].str.strip().str.upper() == "Y"
     df["Dales 30 Flag"] = df["Dales_30_indicator"].str.strip().str.upper() == "Y"
 
     # Make sure height is numeric
