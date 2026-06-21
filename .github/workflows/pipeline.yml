@@ -29,9 +29,13 @@ jobs:
       - name: Write Google service account credentials
         run: |
           mkdir -p secrets
-          echo "${{ secrets.GOOGLE_BIG_QUERY_SA_CREDS }}" > secrets/gbq-wainwirghts-bot-creds.json
+          printf '%s'"${{ secrets.GOOGLE_BIG_QUERY_SA_CREDS }}" > secrets/gbq-wainwirghts-bot-creds.json
           chmod 600 secrets/gbq-wainwirghts-bot-creds.json
 
+      - name: Validate Google credentials JSON
+        run: |
+          python -c "import json; json.load(open('secrets/gbq-wainwirghts-bot-creds.json'))" && echo "JSON is valid"
+      
       - name: Run pipeline
         run: |
           source .venv/bin/activate
@@ -41,4 +45,4 @@ jobs:
           AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
           AZURE_SQL_USERNAME: ${{ secrets.AZURE_SQL_USERNAME }}
           AZURE_SQL_PASSWORD: ${{ secrets.AZURE_SQL_PASSWORD }}
-          GOOGLE_BIG_QUERY_SA_CREDS: secrets/gbq-wainwirghts-bot-creds.json
+          GOOGLE_APPLICATION_CREDENTIALS: secrets/gbq-wainwirghts-bot-creds.json
