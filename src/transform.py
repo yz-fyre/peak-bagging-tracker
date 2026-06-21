@@ -67,6 +67,46 @@ def compute_metrics(df: pd.DataFrame) -> dict:
 
     total_height_climbed = df.loc[df["Completed"], "Height (Meters)"].sum()
 
+    # Number of completed Wainwrights
+    wainwrights_completed = int(
+        df.loc[(df["Wainwright Flag"] == True) & (df["Completed"]),].shape[0]
+    )
+
+    # Number of completed Outerlying Fells
+    outerlying_fells_completed = int(
+        df.loc[(df["Wainwright Outerlying Fells Flag"] == True) & (df["Completed"]),].shape[0]
+    )
+
+    # Number of completed Birkett Fells
+    birkett_fells_completed = int(
+        df.loc[(df["Birkett Flag"] == True) & (df["Completed"]),].shape[0]
+    )
+
+    # Number of completed Dale 30 Fells
+    dales_30_fells_completed = int(
+        df.loc[(df["Dales 30 Flag"] == True) & (df["Completed"]),].shape[0]
+    )
+
+    # Totals for each category (to compute percentages)
+    total_wainwrights = int(df["Wainwright Flag"].sum())
+    total_outerlying = int(df["Wainwright Outerlying Fells Flag"].sum())
+    total_birkett = int(df["Birkett Flag"].sum())
+    total_dales_30 = int(df["Dales 30 Flag"].sum())
+
+    # Percentages (guard division by zero)
+    pct_completed_wainwrights = (
+        round(wainwrights_completed / total_wainwrights * 100, 1) if total_wainwrights else 0.0
+    )
+    pct_completed_outerlying = (
+        round(outerlying_fells_completed / total_outerlying * 100, 1) if total_outerlying else 0.0
+    )
+    pct_completed_birkett = (
+        round(birkett_fells_completed / total_birkett * 100, 1) if total_birkett else 0.0
+    )
+    pct_completed_dales_30 = (
+        round(dales_30_fells_completed / total_dales_30 * 100, 1) if total_dales_30 else 0.0
+    )
+
     ascents_per_year = (
         df.loc[df["Completed"], "Year Completed"]
         .value_counts()
@@ -81,15 +121,6 @@ def compute_metrics(df: pd.DataFrame) -> dict:
         .to_dict()
     )
 
-    completion_by_area = (
-        df.groupby("Area")["Completed"]
-        .agg(["sum", "count"])
-        .rename(columns={"sum": "completed", "count": "total"})
-    )
-    completion_by_area["pct_complete"] = round(
-        completion_by_area["completed"] / completion_by_area["total"] * 100, 1
-    )
-
     return {
         "total_fells": total_fells,
         "completed": int(completed),
@@ -97,7 +128,14 @@ def compute_metrics(df: pd.DataFrame) -> dict:
         "total_height_climbed_m": float(total_height_climbed),
         "ascents_per_year": ascents_per_year,
         "ascents_per_month": ascents_per_month,
-        "completion_by_area": completion_by_area,
+        "completed_wainwrights": wainwrights_completed,
+        "completed_outerlying_fells": outerlying_fells_completed,
+        "completed_birkett_fells": birkett_fells_completed,
+        "completed_dales_30_fells": dales_30_fells_completed,
+        "pct_completed_wainwrights": pct_completed_wainwrights,
+        "pct_completed_outerlying_fells": pct_completed_outerlying,
+        "pct_completed_birkett_fells": pct_completed_birkett,
+        "pct_completed_dales_30_fells": pct_completed_dales_30,
     }
 
 
@@ -105,8 +143,12 @@ def compute_metrics(df: pd.DataFrame) -> dict:
 if __name__ == "__main__":
     from extract import load_sheet_as_dataframe  
 
+    print("Loading raw data from Google Sheet...")
     raw_df = load_sheet_as_dataframe()
+    print(f"Loaded {len(raw_df)} rows from Google Sheet")
+    print("Transforming data...")
     transformed_df = transform(raw_df)
+    print("Computing metrics...")
     metrics = compute_metrics(transformed_df)
 
     print("New dataset columns:")
@@ -116,9 +158,14 @@ if __name__ == "__main__":
 
     print(f"Completed {metrics['completed']} / {metrics['total_fells']} ({metrics['pct_complete']}%)")
     print(f"Total height climbed: {metrics['total_height_climbed_m']} m")
+    
     print("\nAscents per year:")
     print(metrics["ascents_per_year"])
+    
     print("\nAscents per month:")
     print(metrics["ascents_per_month"])
-    print("\nCompletion by area:")
-    print(metrics["completion_by_area"])
+
+    print(f"\nWainwrights Completed: {metrics['completed_wainwrights']} ({metrics['pct_completed_wainwrights']}%)")
+    print(f"Outerlying Fells Completed: {metrics['completed_outerlying_fells']} ({metrics['pct_completed_outerlying_fells']}%)")
+    print(f"Birkett Fells Completed: {metrics['completed_birkett_fells']} ({metrics['pct_completed_birkett_fells']}%)")
+    print(f"Dales 30 Fells Completed: {metrics['completed_dales_30_fells']} ({metrics['pct_completed_dales_30_fells']}%)")

@@ -20,9 +20,12 @@ def run_pipeline():
     print("Step 2/3: Transforming and cleaning data...")
     clean_df = transform(raw_df)
     metrics = compute_metrics(clean_df)
-    print(f"  Completed {metrics['completed']} / {metrics['total_fells']} "
-          f"({metrics['pct_complete']}%)")
-    print(f"  Total height climbed: {metrics['total_height_climbed_m']} m")
+    print(f"Completed {metrics['completed']} / {metrics['total_fells']} ({metrics['pct_complete']}%)")
+    print(f"Total height climbed: {metrics['total_height_climbed_m']} m")
+    print(f"\nWainwrights Completed: {metrics['completed_wainwrights']} ({metrics['pct_completed_wainwrights']}%)")
+    print(f"Outerlying Fells Completed: {metrics['completed_outerlying_fells']} ({metrics['pct_completed_outerlying_fells']}%)")
+    print(f"Birkett Fells Completed: {metrics['completed_birkett_fells']} ({metrics['pct_completed_birkett_fells']}%)")
+    print(f"Dales 30 Fells Completed: {metrics['completed_dales_30_fells']} ({metrics['pct_completed_dales_30_fells']}%)")
 
     print("Step 3/3: Loading into Azure SQL...")
     load_dataframe(clean_df, "wainwrights")
