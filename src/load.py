@@ -29,7 +29,7 @@ def load_dataframe(df: pd.DataFrame, table_name: str = "wainwrights"):
 
 
 if __name__ == "__main__":
-    from ingest import load_sheet_as_dataframe
+    from extract import load_sheet_as_dataframe
     from transform import clean_data
 
     raw_df = load_sheet_as_dataframe()
