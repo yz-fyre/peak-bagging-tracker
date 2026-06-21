@@ -23,7 +23,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Boolean: X Group or not
     df["Wainwright Flag"] = df["Wainwright_indicator"].str.strip().str.upper() == "Y"
     df["Birkett Flag"] = df["Birkett_indicator"].str.strip().str.upper() == "Y"
-    df["Outerlying Flag"] = df["Outerlying_Fell_indicator"].str.strip().str.upper() == "Y"
+    df["Outerlying Flag"] = df["Outerlying_indicator"].str.strip().str.upper() == "Y"
     df["Dales 30 Flag"] = df["Dales_30_indicator"].str.strip().str.upper() == "Y"
 
     # Make sure height is numeric
@@ -74,7 +74,7 @@ def compute_metrics(df: pd.DataFrame) -> dict:
 
     # Number of completed Outerlying Fells
     outerlying_fells_completed = int(
-        df.loc[(df["Wainwright Outerlying Fells Flag"] == True) & (df["Completed"]),].shape[0]
+        df.loc[(df["Outerlying Flag"] == True) & (df["Completed"]),].shape[0]
     )
 
     # Number of completed Birkett Fells
@@ -89,7 +89,7 @@ def compute_metrics(df: pd.DataFrame) -> dict:
 
     # Totals for each category (to compute percentages)
     total_wainwrights = int(df["Wainwright Flag"].sum())
-    total_outerlying = int(df["Wainwright Outerlying Fells Flag"].sum())
+    total_outerlying = int(df["Outerlying Flag"].sum())
     total_birkett = int(df["Birkett Flag"].sum())
     total_dales_30 = int(df["Dales 30 Flag"].sum())
 
