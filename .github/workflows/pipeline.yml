@@ -25,17 +25,11 @@ jobs:
         run: |
           source .venv/bin/activate
           pip install -r requirements.txt
-      
-      - name: Check secret is present (length only)
-        run: |
-          echo "Secret length: ${#GBQ_CREDS}"
-        env:
-          GBQ_CREDS: ${{ secrets.GOOGLE_BIG_QUERY_SA_CREDS }}
-          
+
       - name: Write Google service account credentials
         run: |
           mkdir -p secrets
-          printf '%s'"${{ secrets.GOOGLE_BIG_QUERY_SA_CREDS }}" > secrets/gbq-wainwirghts-bot-creds.json
+          printf '%s' "$GBQ_CREDS" > secrets/gbq-wainwirghts-bot-creds.json
           chmod 600 secrets/gbq-wainwirghts-bot-creds.json
 
       - name: Validate Google credentials JSON
